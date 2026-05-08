@@ -570,6 +570,17 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     }
   }
 
+  let mcpConfigPath: string | null = null;
+  const rawMcpServers = config.mcpServers;
+  if (rawMcpServers && typeof rawMcpServers === "object" && Object.keys(rawMcpServers).length > 0) {
+    mcpConfigPath = path.join(promptBundle.addDir, "mcp-config.json");
+    await fs.writeFile(
+      mcpConfigPath,
+      JSON.stringify({ mcpServers: rawMcpServers }, null, 2),
+      "utf-8",
+    );
+  }
+
   const runtimeSessionParams = parseObject(runtime.sessionParams);
   const runtimeSessionId = asString(runtimeSessionParams.sessionId, runtime.sessionId ?? "");
   const runtimeSessionCwd = asString(runtimeSessionParams.cwd, "");
@@ -671,6 +682,7 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
       args.push("--append-system-prompt-file", attemptInstructionsFilePath);
     }
     args.push("--add-dir", effectivePromptBundleAddDir);
+    if (mcpConfigPath) args.push("--mcp-config", mcpConfigPath);
     if (extraArgs.length > 0) args.push(...extraArgs);
     return args;
   };
