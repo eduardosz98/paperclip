@@ -2498,7 +2498,7 @@ function McpServersTab({
   companyId: string | undefined;
 }) {
   const queryClient = useQueryClient();
-  const { pushToast } = useToast();
+  const { pushToast } = useToastActions();
   const lastAgentRef = useRef(agent);
   const [awaitingRefresh, setAwaitingRefresh] = useState(false);
   const [localServers, setLocalServers] = useState<McpServersMap | undefined>(
